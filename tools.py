@@ -19,13 +19,13 @@ class video_processor:
         print('2.Transcribing..')
         self.result=self.model.transcribe(f'{self.name}.mp3')
         print('Done')
-    def translate_text(self,src_lang='es',dest_lang='en'):
+    def translate_text(self,src_lang,dst_lang):
         print('3. Translating..')
         self.final_res=[{'id':r['id'],\
             'start':time.strftime("%H:%M:%S,000", time.gmtime(r['start'])),\
             'end':time.strftime("%H:%M:%S,000", time.gmtime(r['end'])),\
             'text':r['text'],\
-            'translation':self.translator.translate(r['text'],src=src_lang, dest=dest_lang).text} for r in self.result['segments']]
+            'translation':self.translator.translate(r['text'],src=src_lang, dest=dst_lang).text} for r in self.result['segments']]
         print('Done.')
     def create_srt(self):
         print('4.Creating srt file')
@@ -37,7 +37,7 @@ class video_processor:
         print('Done.')
     def merge_subtitles(self):
         print('5. Merging video subtitles')
-        command=f'ffmpeg -i "{self.video_file_name}" -vf subtitles="{self.name}.srt" "{self.name}_with_subtitles.mp4"'
+        command=f'ffmpeg -i "{self.video_file_name}" -vf subtitles="{self.name}.srt" -y "{self.name}_with_subtitles.mp4"'
         os.system(command)
         print('Done.')
 

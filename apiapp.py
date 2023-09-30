@@ -2,8 +2,8 @@ from flask import Flask, jsonify, request
 import os
 from tools import video_processor
 import whisper
-
-
+import json
+import time
 
 app = Flask(__name__)
 model=whisper.load_model("small")
@@ -12,14 +12,15 @@ model=whisper.load_model("small")
 def translate():
     if request.method=='POST':
         videofile=request.files['video']
-        print(videofile.filename)
-        #videoname=request.json['name']
+        video_lang=json.loads(request.form['json_data'])
+        
+        
         videofile.save(videofile.filename)
-        #print(videoname)
+        time.sleep(0.5)        
         video_tool=video_processor(videofile.filename,model)
         video_tool.extract_audio()
         video_tool.transcribe_audio()
-        video_tool.translate_text()
+        video_tool.translate_text(src_lang=video_lang['srclang'],dst_lang=video_lang['dstlang'])
         video_tool.create_srt()
         video_tool.merge_subtitles()
 
