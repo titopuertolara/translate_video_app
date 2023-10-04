@@ -11,24 +11,26 @@ model=whisper.load_model("small")
 @app.route('/translate',methods=['POST'])
 def translate():
     if request.method=='POST':
-        videofile=request.files['video']
-        video_lang=json.loads(request.form['json_data'])
+        video_params=request.json
+               
+        video_file_name=video_params['filename']
+                
         
-        
-        videofile.save(videofile.filename)
         time.sleep(0.5)        
-        video_tool=video_processor(videofile.filename,model)
+        video_tool=video_processor(video_file_name,model)
         video_tool.extract_audio()
         video_tool.transcribe_audio()
-        video_tool.translate_text(src_lang=video_lang['srclang'],dst_lang=video_lang['dstlang'])
+        video_tool.translate_text(src_lang=video_params['srclang'],dst_lang=video_params['dstlang'])
         video_tool.create_srt()
         video_tool.merge_subtitles()
+        name=video_tool.name+'_with_subtitles.mp4'
+
 
         
 
 
 
-    return jsonify({'text':'ok'})
+    return jsonify({'response':name})
 
 if __name__=='__main__':
     app.run()

@@ -1,11 +1,11 @@
 import requests
 import json
 
-video_name='/home/andres/whisper/Uma memória do Futuro-20230816_180222-Meeting Recording_cut.mp4'
+video_name='/home/andres/whisper/ucompensar.mp4'
 
 data = {
-    'srclang': 'pt',
-    'dstlang': 'es'
+    'srclang': 'es',
+    'dstlang': 'de'
 }
 
 # Define the file(s) to upload
@@ -18,5 +18,6 @@ payload = {'json_data': (None,json.dumps(data), 'application/json')}
 payload.update(files)
 
 resp=requests.post('http://localhost:5000/translate',files=payload)
+with open('translated_video.mp4','wb') as videofile:
+    videofile.write(resp.content)
 
-print(resp.json())
