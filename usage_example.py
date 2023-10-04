@@ -1,11 +1,11 @@
 import requests
 import json
 
-video_name='/home/andres/whisper/ucompensar.mp4'
+video_name='/home/andres/whisper/Uma memória do Futuro-20230816_180222-Meeting Recording_cut.mp4'
 
 data = {
-    'srclang': 'es',
-    'dstlang': 'de'
+    'srclang': 'pt',
+    'dstlang': 'es'
 }
 
 # Define the file(s) to upload
