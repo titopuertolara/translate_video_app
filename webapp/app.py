@@ -4,29 +4,38 @@ import base64
 from googletrans import constants
 import time
 import requests
-import base64
-from io import BytesIO
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=external_stylesheets,suppress_callback_exceptions=True)
 server=app.server
 languages=constants.LANGUAGES
+language_pickers=  html.Div([
+                        html.Div(id='lang_origin',
+                            children=[dcc.Dropdown(id='langsrc',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Video language')],
+                            style={'width':'50%'}
+                        ),
+                        html.Div(id='lang_destiny',
+                            children=[dcc.Dropdown(id='langdst',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Subtitles language')],
+                            style={'width':'50%'}
+
+                        )
+
+                    ])
+
 app.layout=html.Div([
-
-    dcc.Upload(id='uploader',children=['Drag and drop'],style={'width':'50%','borderStyle':'dashed'}),
-    html.Div(id='output-div'),
     html.Div([
-        html.Div(id='lang_origin',
-            children=[dcc.Dropdown(id='langsrc',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Original language')],
-            style={'width':'20%','display':'inline-block'}
-        ),
-        html.Div(id='lang_destiny',
-            children=[dcc.Dropdown(id='langdst',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Subtitles language')],
-            style={'width':'20%','display':'inline-block'}
-
-        )
-
-    ]),
+        html.Img(id='main-img',src='assets/images/fuffy1.png',width=100,height=100,style={'margin-left':'32%','position':'absolute','margin-top':'0.2%'}),
+        html.H3('Add subtitles to video',style={'margin-top':'3%','position':'absolute'})
+    
+    ],style={'margin':'auto','width':'80%','text-align':'center'}),
+    dcc.Upload(id='uploader'
+        ,children=[html.P('Drag and drop your video here or click .',style={'text-align':'center'})]
+        ,style={'width':'80%','height':'100px','borderStyle':'dashed','margin':'auto'}
+   
+    ),
+    
+  
   
     html.Table([  # Create an HTML table
         # Header row
@@ -38,7 +47,15 @@ app.layout=html.Div([
         # Data row
         html.Tr([
             html.Td(
-                dcc.Loading(id='video-1',children=[html.Div(id='video-container')],type='circle'), 
+                dcc.Loading(id='video-1',
+                    children=[  
+                        html.Div(id='name-div'),
+                        language_pickers,
+                        html.Div(id='video-container'),
+                        html.Div(id='translate-container-btn',children=[html.Button('translate',id='translate-button',n_clicks=0)])
+                    ],
+                    type='circle'
+                    ), 
                 style={'border': '1px solid gray'}
             ),  
             html.Td(
@@ -46,20 +63,21 @@ app.layout=html.Div([
                style={'border': '1px solid gray'}
             )   # Data cell 2
         ])
-    ]),
+    ],style={'margin-left':'auto','margin-right':'auto','width':'80%'}),
 
-    html.Div(id='translate-container-btn',children=[html.Button('translate',id='translate-button',n_clicks=0)]),
+   
    
     
-    
+   
     dcc.Store(id='filename-temp'),
+    
    
     
    
 
 ])
 
-@app.callback(Output('output-div','children'),
+@app.callback(Output('name-div','children'),
               Output('video-container','children'),
               #Output('translate-container-btn','children'),
               Output('filename-temp','data'),
@@ -78,22 +96,29 @@ def process_video_content(contents,filename):
             
             #button=html.Button('translate',id='translate-button',n_clicks=0)
             #return f'Uploaded {filename}',button,{'video_path':video_path}
-            return f'Uploaded {filename}',video_embedded,{'video_path':video_path}
+            return f'Filename :  {filename}',video_embedded,{'video_path':video_path}
         except Exception as e:
             print(e)
             pass
     else:
-        return 'Upload video','',''
+        return 'Not video uploaded.','',''
 
 @app.callback(Output('video-translated','children'),
+              
               
              [Input('translate-button','n_clicks'),
               State('filename-temp','data'),
              State('langsrc','value'),
              State('langdst','value')])
 def translate_video(n_clicks,filename_dict,langsrc,langdst):
-    print(ctx.triggered_id)
+    
     if ctx.triggered_id=='translate-button':
+        if langsrc is None:
+            return 'Please select origin language.'
+        if langdst is None:
+            return 'Please select subtitles language.'
+        if filename_dict=='':
+            return 'Please upload a video.'
         video_name=filename_dict['video_path']
         data = {
             "srclang": langsrc,
@@ -110,11 +135,14 @@ def translate_video(n_clicks,filename_dict,langsrc,langdst):
         #video_data=base64.b64encode(resp.content).decode('utf-8')
         
         #translated_video_path=f"data:video/mp4;base64,{video_data}"
-        video_translated=html.Video(id='video-translated',src=translated_video_path,controls=True,height='480',width='640')
+        #video_translated=html.Video(id='video-translated',src=translated_video_path,controls=True,height='480',width='640')
+        #video_translated=html.Div(children=[html.Button('Download video',id='download-video'),dcc.Download(id='downloader')])
+        video_translated=html.A(translated_video_path.split('/')[-1],download='video.mp4',href=translated_video_path,target="_blank")
         return video_translated
+    else:
+        return ''
     
-
-        
+    
 
 
 
