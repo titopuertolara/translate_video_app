@@ -1,19 +1,30 @@
 from dash import Dash,dcc,html,Input,Output,callback,State,ctx
 import os
 import base64
-import dash_player
+from googletrans import constants
 import time
 import requests
+import base64
+from io import BytesIO
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=external_stylesheets,suppress_callback_exceptions=True)
 server=app.server
-
+languages=constants.LANGUAGES
 app.layout=html.Div([
 
     dcc.Upload(id='uploader',children=['Drag and drop'],style={'width':'50%','borderStyle':'dashed'}),
     html.Div(id='output-div'),
     html.Div([
-        html.Div(id='men')
+        html.Div(id='lang_origin',
+            children=[dcc.Dropdown(id='langsrc',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Original language')],
+            style={'width':'20%','display':'inline-block'}
+        ),
+        html.Div(id='lang_destiny',
+            children=[dcc.Dropdown(id='langdst',options=[{'label':languages[i],'value':i} for i in languages],placeholder='Subtitles language')],
+            style={'width':'20%','display':'inline-block'}
+
+        )
 
     ]),
   
@@ -38,9 +49,11 @@ app.layout=html.Div([
     ]),
 
     html.Div(id='translate-container-btn',children=[html.Button('translate',id='translate-button',n_clicks=0)]),
+   
     
     
-    dcc.Store(id='filename-temp')
+    dcc.Store(id='filename-temp'),
+   
     
    
 
@@ -60,7 +73,7 @@ def process_video_content(contents,filename):
             with open(video_path,'wb') as videofile:
                 videofile.write(base64.b64decode(contents.split(',')[1]))
             
-            #video_embedded=dash_player.DashPlayer(id='video-player',url=video_path,controls=True)
+            
             video_embedded=html.Video(id='video-player',src=video_path,controls=True,height='480',width='640')
             
             #button=html.Button('translate',id='translate-button',n_clicks=0)
@@ -73,23 +86,39 @@ def process_video_content(contents,filename):
         return 'Upload video','',''
 
 @app.callback(Output('video-translated','children'),
+              
              [Input('translate-button','n_clicks'),
-             State('filename-temp','data')])
-def translate_video(n_clicks,filename_dict):
+              State('filename-temp','data'),
+             State('langsrc','value'),
+             State('langdst','value')])
+def translate_video(n_clicks,filename_dict,langsrc,langdst):
     print(ctx.triggered_id)
     if ctx.triggered_id=='translate-button':
         video_name=filename_dict['video_path']
         data = {
-            "srclang": "pt",
-            "dstlang": "es",
+            "srclang": langsrc,
+            "dstlang": langdst,
             "filename":video_name
         }
+        print(data)
+
         resp=requests.post('http://localhost:5000/translate',json=data)
-        #print(resp.json())
-        video_translated=html.Video(id='video-translated',src=resp.json()['response'],controls=True,height='480',width='640')
+        #print(resp.json()['response'])
+        translated_video_path=resp.json()['response'] #another option but deppending of api return
+        #print(translated_video_path)
+        
+        #video_data=base64.b64encode(resp.content).decode('utf-8')
+        
+        #translated_video_path=f"data:video/mp4;base64,{video_data}"
+        video_translated=html.Video(id='video-translated',src=translated_video_path,controls=True,height='480',width='640')
         return video_translated
-    else:
-        return ''
+    
+
+        
+
+
+
+
 
 
 if __name__=='__main__':

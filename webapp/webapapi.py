@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,send_file
 import os
 from tools import video_processor
 import whisper
@@ -21,16 +21,18 @@ def translate():
         video_tool.extract_audio()
         video_tool.transcribe_audio()
         video_tool.translate_text(src_lang=video_params['srclang'],dst_lang=video_params['dstlang'])
-        video_tool.create_srt()
-        video_tool.merge_subtitles()
-        name=video_tool.name+'_with_subtitles.mp4'
-
+        video_tool.create_srt(video_params['srclang'],video_params['dstlang'])
+        video_tool.merge_subtitles(video_params['srclang'],video_params['dstlang'])
+        name=video_tool.name+f"_with_subtitles_{video_params['srclang']}_{video_params['dstlang']}.mp4"
+        print(f'sending {name}')
+        time.sleep(10)
 
         
 
 
 
     return jsonify({'response':name})
+    #return send_file(name)
 
 if __name__=='__main__':
     app.run()

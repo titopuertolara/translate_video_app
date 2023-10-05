@@ -9,6 +9,7 @@ class video_processor:
         self.name=self.video_file_name.split('.')[0]
         self.model=model
         self.translator=Translator()
+        
     def extract_audio(self):
         
         command=f'ffmpeg -i "{self.video_file_name}" -y "{self.name}.mp3"'
@@ -27,17 +28,17 @@ class video_processor:
             'text':r['text'],\
             'translation':self.translator.translate(r['text'],src=src_lang, dest=dst_lang).text} for r in self.result['segments']]
         print('Done.')
-    def create_srt(self):
+    def create_srt(self,srclang,dstlang):
         print('4.Creating srt file')
         self.srt_txt=''
         for r in self.final_res:
             self.srt_txt+=f"{str(r['id']+1)}\n{r['start']} --> {r['end']}\n{r['translation']}\n\n"
-        with open(f'{self.name}.srt','w') as srtfile:
+        with open(f'{self.name}_{srclang}_{dstlang}.srt','w') as srtfile:
             srtfile.write(self.srt_txt)
         print('Done.')
-    def merge_subtitles(self):
+    def merge_subtitles(self,srclang,dstlang):
         print('5. Merging video subtitles')
-        command=f'ffmpeg -i "{self.video_file_name}" -vf subtitles="{self.name}.srt" -y "{self.name}_with_subtitles.mp4"'
+        command=f'ffmpeg -i "{self.video_file_name}" -vf subtitles="{self.name}_{srclang}_{dstlang}.srt" -y "{self.name}_with_subtitles_{srclang}_{dstlang}.mp4"'
         os.system(command)
         print('Done.')
 
