@@ -15,5 +15,7 @@ Activate api file
 
 Activate webapp 
 
-```python app.py``` (listening on 127.0.0.1:8050, this must be on another console tab ) 
+```python app.py``` (listening on 127.0.0.1:8050, this must be on another console tab ) <br />
+
+Results are inside ```webapp/assets/uploads``` folder
 
