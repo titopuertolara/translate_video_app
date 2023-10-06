@@ -1,5 +1,6 @@
 # translate_video_app
-![sample]([image link](https://github.com/titopuertolara/translate_video_app/blob/main/images/Screenshot%20from%202023-10-06%2011-22-41.png))
+
+![Screenshot from 2023-10-06 11-22-41](https://github.com/titopuertolara/translate_video_app/assets/10605898/d4826d2b-c16c-4016-9b0f-987dbffa0c5c)
 
 
 Create virtual enviroment eg ```python3.9 -m env my_enviroment```<br />
