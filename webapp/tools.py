@@ -24,9 +24,9 @@ class video_processor:
         print('3. Translating..')
         
         self.final_res=[]
-        for r in tqdm(result['segments']):
+        for r in tqdm(self.result['segments']):
             try:
-                final_res.append({'id':r['id'],\
+                self.final_res.append({'id':r['id'],\
                 'start':time.strftime("%H:%M:%S,000", time.gmtime(r['start'])),\
                 'end':time.strftime("%H:%M:%S,000", time.gmtime(r['end'])),\
                 'text':r['text'],\
