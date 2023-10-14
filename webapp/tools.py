@@ -2,7 +2,7 @@ import os
 #import whisper 
 import time
 from googletrans import Translator,constants
-
+from tqdm import tqdm
 class video_processor:
     def __init__(self,video_file_name,model):
         self.video_file_name=video_file_name
@@ -22,11 +22,18 @@ class video_processor:
         print('Done')
     def translate_text(self,src_lang,dst_lang):
         print('3. Translating..')
-        self.final_res=[{'id':r['id'],\
-            'start':time.strftime("%H:%M:%S,000", time.gmtime(r['start'])),\
-            'end':time.strftime("%H:%M:%S,000", time.gmtime(r['end'])),\
-            'text':r['text'],\
-            'translation':self.translator.translate(r['text'],src=src_lang, dest=dst_lang).text} for r in self.result['segments']]
+        
+        self.final_res=[]
+        for r in tqdm(result['segments']):
+            try:
+                final_res.append({'id':r['id'],\
+                'start':time.strftime("%H:%M:%S,000", time.gmtime(r['start'])),\
+                'end':time.strftime("%H:%M:%S,000", time.gmtime(r['end'])),\
+                'text':r['text'],\
+                'translation':translator.translate(r['text'],src='pt', dest="es").text})
+            except:
+                print('Error translating segment, skipping')
+        
         print('Done.')
     def create_srt(self,srclang,dstlang):
         print('4.Creating srt file')

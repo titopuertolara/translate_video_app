@@ -1,11 +1,11 @@
 import requests
 import json
 
-video_name='/home/andres/whisper/ucompensar.mp4'
+video_name='/home/andres/whisper/videos_tin/breathe.mp4'
 
 data = {
-    "srclang": "es",
-    "dstlang": "it",
+    "srclang": "pt",
+    "dstlang": "es",
     "filename":video_name
 }
 
