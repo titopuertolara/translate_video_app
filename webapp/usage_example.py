@@ -1,7 +1,7 @@
 import requests
 import json
 
-video_name='/home/andres/whisper/videos_tin/breathe.mp4'
+video_name='/home/andres/whisper/videos_tin/Uma memória do Futuro-20230906_180342-Meeting Recording_EDIT.mp4'
 
 data = {
     "srclang": "pt",
