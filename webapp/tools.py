@@ -30,7 +30,7 @@ class video_processor:
                 'start':time.strftime("%H:%M:%S,000", time.gmtime(r['start'])),\
                 'end':time.strftime("%H:%M:%S,000", time.gmtime(r['end'])),\
                 'text':r['text'],\
-                'translation':self.translator.translate(r['text'],src='pt', dest="es").text})
+                'translation':self.translator.translate(r['text'],src=src_lang, dest=dst_lang).text})
             except:
                 print('Error translating segment, skipping')
         
