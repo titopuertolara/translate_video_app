@@ -18,7 +18,7 @@ class video_processor:
         print('Done.')
     def transcribe_audio(self):
         print('2.Transcribing..')
-        self.result=self.model.transcribe(f'{self.name}.mp3')
+        self.result=self.model.transcribe(f'{self.name}.mp3',verbose=True)
         print('Done')
     def translate_text(self,src_lang,dst_lang):
         print('3. Translating..')
