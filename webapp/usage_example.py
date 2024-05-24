@@ -1,10 +1,10 @@
 import requests
 import json
 
-video_name='/home/andres/whisper/wetransfer_uma-memoria-do-futuro-20240228_171104-meeting-recording-mp4_2024-04-24_2146/Uma memória do futuro-20240320_175705-Meeting Recording.mp4'
+video_name='/home/andres/Videos/Databricks Fundamentals/Supported Workloads and the Data INtelligence Engine/Orchestration-2024-05-23_11.02.06.mkv'
 
 data = {
-    "srclang": "pt",
+    "srclang": "en",
     "dstlang": "es",
     "filename":video_name
 }
